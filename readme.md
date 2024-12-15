@@ -22,3 +22,10 @@ A test reqeust:
   ```
   curl -Uri "http://127.0.0.1:8000/inference" -Method POST -Body '{"request": 42}' -ContentType "application/json"
   ```
+
+## Current usage
+### start server: 
+```python server_with _queue.py```
+
+### Doing simulation:
+```python simulation.py``` 

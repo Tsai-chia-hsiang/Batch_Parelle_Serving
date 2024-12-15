@@ -3,7 +3,7 @@
 This repo is to Replicate Ollama serving by our own understanding.
 
 
-<img src="./overall_0.png">
+<img src="./overall.png">
 
 **maybe all wrong at all**
 it is just the project for our course while we are fxcked by our professor to do a lot of projects.

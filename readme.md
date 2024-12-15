@@ -13,4 +13,11 @@ it is just the project for our course while we are fxcked by our professor to do
   - asycio
   - unicorn
   
-- lallma using python to do inference
+- lallma inference script:
+  - TODO
+
+A test reqeust:
+- Windows Powershell:
+  ```
+  curl -Uri "http://127.0.0.1:8000/inference" -Method POST -Body '{"request": 42}' -ContentType "application/json"
+  ```

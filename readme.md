@@ -5,7 +5,7 @@ This repo is to Replicate Ollama serving by our own understanding.
 
 <img src="./overall.png">
 
-**maybe all wrong at all**
+**maybe all of them are wrong at all**
 
 it is just the project for our course while we are fxcked by our professor to tell us do a lot of projects at the same period.
   - i.e. We don't have the fxcking time to research it.

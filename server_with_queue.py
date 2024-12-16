@@ -3,7 +3,11 @@ from pydantic import BaseModel
 import asyncio
 from contextlib import asynccontextmanager
 import uvicorn
-from llm import llm_inference
+from llm import Llama_Inference_Wrapper
+import os
+LLM = None 
+if os.getenv("RUN_MAIN") == "true":  # RUN_MAIN is set only in the worker process
+    LLM = Llama_Inference_Wrapper()
 
 # Asynchronous queues for pending requests and responses
 pending_Q = asyncio.Queue()
@@ -11,13 +15,14 @@ finished_Q = asyncio.Queue()
 
 # Schema for incoming requests
 class InferenceRequest(BaseModel):
-    request: int  # Single request instead of batch
+    request: str  # Single request instead of batch
 
 # Global request ID counter
 request_id_counter = 0
 
 # Background task to process requests from the pending queue
-async def process_requests_from_queue():
+async def process_requests_from_queue(app: FastAPI):
+    
     try:
         while True:
             batch = []
@@ -31,8 +36,8 @@ async def process_requests_from_queue():
                     batch_ids.append(request_id)
 
             if batch:
-                print(f"Processing batch: {batch}")
-                results = await llm_inference(batch)
+      
+                results = await app.state.LLM (batch)
 
                 # Add results to the finished queue
                 for request_id, result in zip(batch_ids, results):
@@ -64,7 +69,8 @@ async def return_responses_to_clients(app: FastAPI):
 async def lifespan(app: FastAPI):
     print("Starting server...")
     # Start background tasks for request processing and response handling
-    app.state.processing_task = asyncio.create_task(process_requests_from_queue())
+    app.state.LLM = Llama_Inference_Wrapper(use_model="tw")
+    app.state.processing_task = asyncio.create_task(process_requests_from_queue(app))
     app.state.response_task = asyncio.create_task(return_responses_to_clients(app))
     app.state.response_futures = {}
     try:
@@ -91,7 +97,7 @@ async def enqueue_request(request: InferenceRequest):
     # Increment the request ID
     request_id_counter += 1
     request_id = request_id_counter
-
+    
     # Create a future to hold the result for this request
     loop = asyncio.get_event_loop()
     response_future = loop.create_future()
@@ -110,4 +116,5 @@ async def enqueue_request(request: InferenceRequest):
 
 # Run the server with Uvicorn
 if __name__ == "__main__":
+    
     uvicorn.run("server_with_queue:app", host="0.0.0.0", port=8000, reload=True)

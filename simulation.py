@@ -4,6 +4,13 @@ import asyncio
 import aiohttp
 import random
 
+prompts = [
+    "用 c語言 寫一個 hello world",
+    "寫一個 python 的小程式?",
+    "冷氣要開幾度比較適合呢?",
+    "一天要喝多少水比較健康?"
+]
+
 # Async function to send a single request
 async def send_request(session, client_request, results):
     url = "http://localhost:8000/inference"  # Endpoint of the server
@@ -24,7 +31,7 @@ async def send_requests(results):
     async with aiohttp.ClientSession() as session:
         while True:
             # Generate a random request
-            client_request = random.randint(1, 100)
+            client_request = prompts[random.randint(0, len(prompts)-1)]
 
             # Fire off the request asynchronously
             asyncio.create_task(send_request(session, client_request, results))
